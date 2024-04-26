@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  front-app:
+    image: front-app
+    ports:
+      - "3000:80"
+    depends_on:
+      - flask-main-app
+      - flask-quote-engine
+
+  flask-main-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.flask-main
+    ports:
+      - "5000:5000"
+    environment:
+      FLASK_APP: "backend/main/app.py"
+
+  flask-quote-engine:
+    build:
+      context: .
+      dockerfile: Dockerfile.flask-quote
+    ports:
+      - "5001:5001"
+    environment:
+      FLASK_APP: "app.py"

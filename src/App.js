@@ -1,24 +1,39 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import { Amplify } from 'aws-amplify';
+import { awsExports } from './aws-exports';
+import { Authenticator } from '@aws-amplify/ui-react';
+import '@aws-amplify/ui-react/styles.css';
+import ResponsiveAppBar from './components/ResponsiveAppBar';
+import ProfessionInput from './components/ProfessionInput'; // Import the ProfessionInput component
+import Container from '@mui/material/Container';
+
+Amplify.configure(awsExports);
 
 function App() {
+  const [user, setUser] = useState(null);
+
+  const handleStateChange = (authState, authData) => {
+    setUser(authData);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Authenticator onStateChange={handleStateChange}>
+      {({ signOut, user }) => (
+        <div>
+          <ResponsiveAppBar signOut={signOut} />
+          <div>
+            {user && (
+              <div>
+                <Container>
+                <h1 className="text-3xl font-bold underline">Welcome {user.username}</h1>
+                <ProfessionInput username={user.username} />
+                </Container>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </Authenticator>
   );
 }
 
